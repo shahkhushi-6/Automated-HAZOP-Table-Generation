@@ -24,28 +24,6 @@ Takes a **process P&ID (Piping & Instrumentation Diagram)** and generates a comp
 
 ---
 
-## ⚡ Quick Start (5 minutes)
-
-### Windows
-```bash
-# Clone/copy files to VS Code project folder
-cd hazop-project
-setup.bat         # One-time setup
-python train.py   # Start training (requires data in ./data/ folder)
-```
-
-### Linux/macOS
-```bash
-cd hazop-project
-chmod +x setup.sh
-./setup.sh        # One-time setup
-python train.py   # Start training
-```
-
-See **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** for complete instructions.
-
----
-
 ## 📁 Project Structure
 
 ```
@@ -255,31 +233,6 @@ MORE_CONCENTRATION, LESS_CONCENTRATION,
 OTHER_THAN
 ```
 
----
-
-## ⚠️ Fixed Issues
-
-### ✅ Issue 1: bos_token_id Error
-**Problem:** Model crashed on T5 encoder with missing `bos_token_id`  
-**Fix:** Safe fallback in `model.py` - checks `decoder_start_token_id` → `bos_token_id` → defaults to 0
-
-### ✅ Issue 2: edges.csv Phase Column
-**Problem:** Code looked for `fluid_type` but data had `phase` column  
-**Fix:** `read_edges()` now checks BOTH `fluid_type` AND `phase`, defaults gracefully
-
-### ✅ Issue 3: Equipment Type Mismatch
-**Problem:** Data had `centrifugal_pump`, code only knew `pump`  
-**Fix:** Extended `EQUIPMENT_TYPES` dict with alternative names:
-- `centrifugal_pump` → pump
-- `shell_tube_exchanger` → heat_exchanger
-- All with safe fallback to 0 (unknown)
-
-### ✅ Issue 4: Flexible Column Naming
-**Problem:** Instrument flags had inconsistent names  
-**Fix:** All readers check multiple column name variations with `.get()`
-
----
-
 ## 🚀 Advanced Usage
 
 ### Resume Training from Checkpoint
@@ -349,45 +302,6 @@ cat ./checkpoints/test_results.json
 # {"test_loss": 2.34, "deviation": 1.89, "causes": 2.10, ...}
 ```
 
----
-
-## 🐛 Troubleshooting
-
-### CUDA Out of Memory
-```
-RuntimeError: CUDA out of memory
-```
-**Fix:** Reduce batch size or use gradient accumulation
-```bash
-python train.py --batch_size 4 --grad_accumulate_steps 2
-```
-
-### No Data Found
-```
-ValueError: No valid HAZOP instances loaded
-```
-**Fix:** Check folder structure (case-sensitive):
-- `./data/system_0001/nodes.csv` ✓
-- `./data/system_0001/adjacency.csv` ✓
-- `./data/system_0001/edges.csv` ✓
-- `./data/system_0001/hazop.csv` ✓
-
-### Module Not Found
-```
-ModuleNotFoundError: No module named 'torch_geometric'
-```
-**Fix:** Reinstall PyG
-```bash
-pip install torch-geometric --force-reinstall
-```
-
-### Wrong Column Names
-```
-WARNING: Unknown guideword in HAZOP
-```
-**Fix:** Check spelling (case-sensitive) against `GUIDEWORDS` list in code
-
----
 
 ## 📚 Code Architecture
 
@@ -427,23 +341,6 @@ Proprietary - For authorized use only
 
 ---
 
-## 🤝 Support
-
-**Quick help:**
-
-1. Read **SETUP_GUIDE.md** for detailed setup
-2. Check **EXAMPLE_*.csv** files for data format
-3. Review error messages for specific fixes
-4. Run with `--help` flag for all options:
-   ```bash
-   python train.py --help
-   python infer.py --help
-   ```
-
-**Common issues & fixes in SETUP_GUIDE.md**
-
----
-
 ## ✨ Key Features
 
 ✅ **AI-Powered**: Uses state-of-the-art GNN+T5 architecture  
@@ -465,6 +362,4 @@ Proprietary - For authorized use only
 
 Result: Comprehensive, AI-assisted HAZOP analysis in minutes!
 
----
 
-**Ready to get started? See SETUP_GUIDE.md →**
